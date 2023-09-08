@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    ports:
+      - '5432:5432'
+
+    environment:
+      - POSTGRESQL_DATABASE=db_name
+      - POSTGRESQL_PASSWORD=password
+
+    volumes:
+        - path/to/database_persistence
