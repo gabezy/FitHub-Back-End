@@ -1,0 +1,47 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(uuid())
+  created_at DateTime  @default(now())
+  updated_at DateTime?
+  first_name String    @db.VarChar(50)
+  last_name  String    @db.VarChar(50)
+  password   String
+  email      String    @unique
+  Workout    Workout[]
+
+  @@map("users")
+}
+
+model Workout {
+  id           String     @id @default(uuid())
+  workout_name String
+  created_at   DateTime   @default(now())
+  updated_at   DateTime?
+  user         User       @relation(fields: [user_id], references: [id])
+  user_id      String
+  Exercise     Exercise[]
+
+  @@map("workouts")
+}
+
+model Exercise {
+  id            String  @id @default(uuid())
+  exercise_name String
+  weight        Int
+  reps          Int
+  sets          Int
+  notes         String? @db.VarChar(100)
+  workout       Workout @relation(fields: [workout_id], references: [id])
+  workout_id    String
+
+  @@map("exercises")
+}
