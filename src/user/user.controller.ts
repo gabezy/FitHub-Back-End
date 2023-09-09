@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -10,20 +12,25 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { Prisma, User } from '@prisma/client';
 import { WorkoutService } from 'src/workout/workout.service';
 import { Public } from 'src/security/set-metadata';
+import { EmailAlreadyRegister } from 'src/erros/email-already-register';
+import { ResourceNotFound } from 'src/erros/resource-not-found';
 
 @Controller('users')
 export class UserController {
   constructor(
     private userService: UserService,
     private workoutService: WorkoutService,
-  ) {}
+  ) { }
 
   @Public()
   @Post()
   async postUser(@Body() data: CreateUserDto) {
+    const emailExists = await this.userService.findUserByEmail(data.email);
+    if (emailExists !== null) {
+      throw new HttpException(new EmailAlreadyRegister().message, HttpStatus.BAD_REQUEST)
+    }
     const user = await this.userService.createUser(data);
     Reflect.deleteProperty(user, 'password');
     return { user };
@@ -41,9 +48,16 @@ export class UserController {
 
   @Get(':userId')
   async getUser(@Param('userId') userId: string) {
-    const user = await this.userService.findUserById(userId);
-    Reflect.deleteProperty(user, 'password');
-    return { user };
+    try {
+      const user = await this.userService.findUserById(userId);
+      Reflect.deleteProperty(user, 'password');
+      return { user };
+    } catch (error) {
+      if (error instanceof ResourceNotFound) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND)
+      }
+      throw error
+    }
   }
 
   @Get(':userId/workouts')
@@ -55,9 +69,9 @@ export class UserController {
   @Put(':userId')
   async updateUser(
     @Param('userId') userId: string,
-    @Body() data: Prisma.UserUpdateInput,
+    @Body() data: { firstName: string, lastName: string },
   ) {
-    await this.userService.updateUser({ id: userId, data });
+    await this.userService.updateUser(userId, data);
   }
 
   @Delete(':userId')
