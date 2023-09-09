@@ -5,7 +5,7 @@ import { CreateWorkoutDto } from './dtos/create-workout-dto';
 
 @Injectable()
 export class WorkoutService {
-  constructor(private workoutRepository: WorkoutRepository) {}
+  constructor(private workoutRepository: WorkoutRepository) { }
 
   async create(createWorkoutDto: CreateWorkoutDto): Promise<Workout> {
     const { workout_name, user_id } = createWorkoutDto;
