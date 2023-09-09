@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ExerciseParams, ExerciseRepository } from '../exercise-repository';
 import { PrismaService } from 'src/infra/database/prisma.service';
 import { Exercise, Prisma } from '@prisma/client';
+import { ResourceNotFound } from 'src/erros/resource-not-found';
 
 @Injectable()
 export class PrismaExerciseRepository implements ExerciseRepository {
@@ -24,15 +25,23 @@ export class PrismaExerciseRepository implements ExerciseRepository {
   }
 
   async getExerciseById(exerciseId: string): Promise<Exercise> {
-    return await this.prismaService.exercise.findUnique({
+    const exercise = await this.prismaService.exercise.findUnique({
       where: { id: exerciseId },
     });
+    if (!exercise) {
+      throw new ResourceNotFound();
+    }
+    return exercise;
   }
 
   async getExercisesByWorkoutId(workoutId: string): Promise<Exercise[]> {
-    return await this.prismaService.exercise.findMany({
+    const exercises = await this.prismaService.exercise.findMany({
       where: { workout_id: workoutId },
     });
+    if (!exercises) {
+      throw new ResourceNotFound();
+    }
+    return exercises;
   }
 
   async updateExercise(
