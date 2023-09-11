@@ -5,7 +5,7 @@ import { Public } from './security/set-metadata';
 
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Public()
   @UseGuards(LocalAuthGuard)
