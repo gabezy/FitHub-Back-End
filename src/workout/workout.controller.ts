@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { WorkoutService } from './workout.service';
 import { CreateWorkoutDto } from './dtos/create-workout-dto';
-import { Prisma } from '@prisma/client';
 import { ExerciseService } from 'src/exercise/exercise.service';
 import { ResourceNotFound } from 'src/erros/resource-not-found';
+import { UpdateWorkoutDto } from './dtos/update-workout-dto';
 
 @Controller('workouts')
 export class WorkoutController {
@@ -57,7 +57,7 @@ export class WorkoutController {
   @Put('/:workoutId')
   async updateWorkout(
     @Param('workoutId') workoutId: string,
-    @Body() data: Prisma.WorkoutUpdateInput,
+    @Body() data: UpdateWorkoutDto,
   ) {
     await this.workoutService.updateWorkout(workoutId, data);
   }
