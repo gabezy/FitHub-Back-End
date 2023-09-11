@@ -61,8 +61,8 @@ export class UserController {
   }
 
   @Get(':userId/workouts')
-  async getWorkoutsByUserId(@Param('userId') userId: string) {
-    const workouts = await this.workoutService.findWorkoutsByUserId(userId);
+  async getWorkoutsByUserId(@Param('userId') userId: string, @Query("page") page: number) {
+    const workouts = await this.workoutService.findWorkoutsByUserId(userId, Number(page));
     return { workouts };
   }
 
@@ -76,6 +76,6 @@ export class UserController {
 
   @Delete(':userId')
   async deleteUser(@Param('userId') userId: string) {
-    await this.userService.deleteUSer(userId);
+    await this.userService.deleteUser(userId);
   }
 }
