@@ -10,6 +10,7 @@ import { WorkoutService } from 'src/workout/workout.service';
 import { CreateWorkoutDto } from 'src/workout/dtos/create-workout-dto';
 import { PrismaService } from 'src/infra/database/prisma.service';
 import { CreateAndAuthenticateUserService } from 'src/utils/test/create-and-authenticate-user.service';
+import { UpdateUserDto } from 'src/user/dtos/update-user-dto';
 
 describe('User e2e test', () => {
   let _app: INestApplication;
@@ -99,7 +100,6 @@ describe('User e2e test', () => {
       }),
     );
     expect(response.body.user).not.toHaveProperty('password');
-    // await userService.deleteUSer(user.id);
   });
 
 
@@ -125,7 +125,6 @@ describe('User e2e test', () => {
       expect.objectContaining({ workout_name: "workout 1" }),
     ]);
     workouts.forEach(async (element) => await workoutService.deleteWorkout(element.id))
-    // await userService.deleteUSer(user.id);
   })
 
   it("should be able to GET paginated user's workouts at /users/:userId/workouts", async () => {
@@ -152,14 +151,13 @@ describe('User e2e test', () => {
 
     //TODO: Delete only the workouts tests 
     await prismaService.workout.deleteMany();
-    // await userService.deleteUSer(user.id);
 
   })
 
   it("should UPDATE (PUT) an user", async () => {
-    const updateDto = {
-      firstName: "Jonh",
-      lastName: "Wick",
+    const updateDto: UpdateUserDto = {
+      first_name: "Jonk",
+      last_name: "Wick",
     }
     await request(app)
       .put(`/users/${user.id}`)
@@ -171,11 +169,11 @@ describe('User e2e test', () => {
 
     expect(updatedUser).toEqual(
       expect.objectContaining({
-        first_name: updateDto.firstName,
-        last_name: updateDto.lastName
+        first_name: updateDto.first_name,
+        last_name: updateDto.last_name,
+        email: user.email,
       })
     )
-    // await userService.deleteUSer(user.id);
   })
 
 
