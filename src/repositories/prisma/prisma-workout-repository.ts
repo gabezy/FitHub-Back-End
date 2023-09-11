@@ -29,9 +29,13 @@ export class PrismaWorkoutRepository implements WorkoutRepository {
     return workout;
   }
 
-  async findWorkoutsByUserId(userId: string): Promise<Workout[]> {
+  async findWorkoutsByUserId(userId: string, page: number): Promise<Workout[]> {
     const workouts = await this.prismaService.workout.findMany({
       where: { user_id: userId },
+      skip: page,
+      take: 10,
+      orderBy: { created_at: "asc" }
+
     });
     if (!workouts) {
       throw new ResourceNotFound();

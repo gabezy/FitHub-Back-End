@@ -17,8 +17,9 @@ export class WorkoutService {
     return await this.workoutRepository.findWorkoutById(workoutId);
   }
 
-  async findWorkoutsByUserId(userId: string): Promise<Workout[]> {
-    return await this.workoutRepository.findWorkoutsByUserId(userId);
+  async findWorkoutsByUserId(userId: string, page: number): Promise<Workout[]> {
+    const skip = page !== undefined ? (page - 1) * 10 : 0;
+    return await this.workoutRepository.findWorkoutsByUserId(userId, skip);
   }
 
   async updateWorkout(
