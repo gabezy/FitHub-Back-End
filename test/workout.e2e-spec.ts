@@ -7,6 +7,7 @@ import { CreateAndAuthenticateUserService } from 'src/utils/test/create-and-auth
 import { User } from '@prisma/client';
 import { WorkoutService } from 'src/workout/workout.service';
 import { UserService } from 'src/user/user.service';
+import { UpdateWorkoutDto } from 'src/workout/dtos/update-workout-dto';
 
 describe("Workout e2e test", () => {
   let _app: INestApplication;
@@ -90,6 +91,34 @@ describe("Workout e2e test", () => {
     )
     await workoutService.deleteWorkout(workout.id);
 
+  })
+
+  it("should UPDATE (PUT) a workout at/workouts/:workoutId", async () => {
+    const createWorkoutDto: CreateWorkoutDto = {
+      user_id: user.id,
+      workout_name: "Full Body"
+    }
+    const workout = await workoutService.create(createWorkoutDto);
+    const updateWorkoutDto: UpdateWorkoutDto = {
+      workout_name: "Legs"
+    }
+
+    await request(app)
+      .put(`/workouts/${workout.id}`)
+      .send(updateWorkoutDto)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    const updatedWorkout = await workoutService.findWorkoutById(workout.id);
+    expect(updatedWorkout).toEqual(
+      expect.objectContaining({
+        id: workout.id,
+        workout_name: updateWorkoutDto.workout_name,
+        updated_at: expect.any(Date),
+      })
+    )
+
+    await workoutService.deleteWorkout(workout.id);
   })
 
 
