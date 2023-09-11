@@ -10,6 +10,6 @@ import { PrismaUserRepository } from 'src/repositories/prisma/prisma-user-reposi
   imports: [WorkoutModule],
   controllers: [UserController],
   providers: [UserService, PrismaService, { provide: UserRepository, useClass: PrismaUserRepository }],
-  exports: [UserService, PrismaService],
+  exports: [UserService, { provide: UserRepository, useClass: PrismaUserRepository }],
 })
 export class UserModule { }
