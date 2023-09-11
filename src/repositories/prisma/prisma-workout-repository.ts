@@ -3,6 +3,7 @@ import { WorkoutRepository } from '../workout-repository';
 import { PrismaService } from 'src/infra/database/prisma.service';
 import { Prisma, Workout } from '@prisma/client';
 import { ResourceNotFound } from 'src/erros/resource-not-found';
+import { UpdateWorkoutDto } from 'src/workout/dtos/update-workout-dto';
 
 
 @Injectable()
@@ -44,10 +45,10 @@ export class PrismaWorkoutRepository implements WorkoutRepository {
   }
 
   async updateWorkout(
-    data: Prisma.WorkoutUpdateInput,
     workoutId: string,
+    data: UpdateWorkoutDto,
   ): Promise<void> {
-    await this.prismaService.workout.update({ data, where: { id: workoutId } });
+    await this.prismaService.workout.update({ where: { id: workoutId }, data: { workout_name: data.workout_name, updated_at: new Date() } });
   }
 
   async deleteWorkout(workoutId: string): Promise<void> {
