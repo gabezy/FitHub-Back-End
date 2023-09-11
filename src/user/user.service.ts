@@ -3,6 +3,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/repositories/user-repository';
+import { UpdateUserDto } from './dtos/update-user-dto';
 
 @Injectable()
 export class UserService {
@@ -36,8 +37,8 @@ export class UserService {
     return user;
   }
 
-  async updateUser(userId: string, data: { firstName: string, lastName: string }): Promise<void> {
-    await this.userRepository.updateUser(userId, { firstName: data.firstName, lastName: data.lastName })
+  async updateUser(userId: string, data: UpdateUserDto): Promise<void> {
+    await this.userRepository.updateUser(userId, data);
   }
 
   async deleteUser(userId: string): Promise<void> {

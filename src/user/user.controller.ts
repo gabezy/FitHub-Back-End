@@ -16,6 +16,7 @@ import { WorkoutService } from 'src/workout/workout.service';
 import { Public } from 'src/security/set-metadata';
 import { EmailAlreadyRegister } from 'src/erros/email-already-register';
 import { ResourceNotFound } from 'src/erros/resource-not-found';
+import { UpdateUserDto } from './dtos/update-user-dto';
 
 @Controller('users')
 export class UserController {
@@ -69,7 +70,7 @@ export class UserController {
   @Put(':userId')
   async updateUser(
     @Param('userId') userId: string,
-    @Body() data: { firstName: string, lastName: string },
+    @Body() data: UpdateUserDto,
   ) {
     await this.userService.updateUser(userId, data);
   }

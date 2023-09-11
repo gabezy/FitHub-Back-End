@@ -3,6 +3,7 @@ import { UserRepository } from "../user-repository";
 import { User } from "@prisma/client";
 import { PrismaService } from "src/infra/database/prisma.service";
 import { ResourceNotFound } from "src/erros/resource-not-found";
+import { UpdateUserDto } from "src/user/dtos/update-user-dto";
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -31,9 +32,10 @@ export class PrismaUserRepository implements UserRepository {
 
   async findUserByEmail(email: string): Promise<User> {
     const user = await this.prismaService.user.findUnique({ where: { email } })
-    if (!user) {
-      throw new ResourceNotFound()
-    }
+    // TODO: check if this error needs to be here, on the creation needs to check if there is a user that already has this email register
+    // if (!user) {
+    //   throw new ResourceNotFound()
+    // }
     return user;
   }
 
@@ -42,9 +44,19 @@ export class PrismaUserRepository implements UserRepository {
     return users;
   }
 
-  //TODO: Check if firstName and lastName isn't null or undefined before update the user
-  async updateUser(userId: string, data: { firstName?: string; lastName?: string; }): Promise<void> {
-    await this.prismaService.user.update({ where: { id: userId }, data: { first_name: data.firstName, last_name: data.lastName } })
+  async updateUser(userId: string, data: UpdateUserDto): Promise<void> {
+    const { first_name, last_name, email } = data;
+    const updatePayload: any = {};
+    if (first_name) {
+      updatePayload.first_name = first_name;
+    }
+    if (last_name) {
+      updatePayload.last_name = last_name;
+    }
+    if (email) {
+      updatePayload.email = email;
+    }
+    await this.prismaService.user.update({ where: { id: userId }, data: updatePayload })
   }
 
   async deleteUser(userId: string): Promise<void> {
